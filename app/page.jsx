@@ -7,7 +7,7 @@ function Navbar() {
     <div className="navbar">
       <div className="container py-3 flex items-center justify-between">
         <div className="brand">
-          <img src="/unitx-logo.svg" alt="UnitX" className="w-8 h-8 rounded-lg" />
+          <img src="/unitx-logo.png" alt="UnitX" className="w-8 h-8 rounded-lg" />
           <span>UnitX RP • Reportes</span>
         </div>
         <a className="btn-ghost" href="/api/logout">Salir</a>
