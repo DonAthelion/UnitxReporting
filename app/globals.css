@@ -1,3 +1,35 @@
+:root {
+  --bg:   theme(colors.unitx.dark); /* #0b0c10 */
+  --card: theme(colors.unitx.ink);  /* #12151a */
+  --text: #e7e9ea;                  /* texto */
+}
+
+/* Fondo con gradiente UnitX */
+html, body {
+  background:
+    radial-gradient(1100px 500px at 0% 0%, color-mix(in oklab, theme(colors.unitx.teal) 25%, transparent), transparent 60%),
+    radial-gradient(1000px 500px at 100% 100%, color-mix(in oklab, theme(colors.unitx.pink) 20%, transparent), transparent 60%),
+    var(--bg);
+  color: var(--text);
+}
+
+/* Componentes base */
+.card { @apply bg-[color:var(--card)] rounded-2xl shadow-unitx p-6 border border-white/5; }
+.btn  { @apply inline-flex items-center justify-center px-4 py-2 rounded-xl font-semibold transition hover:opacity-90; }
+.btn-primary { @apply btn text-black; background: linear-gradient(135deg, theme(colors.unitx.teal), theme(colors.unitx.pink)); }
+.btn-ghost   { @apply btn bg-white/5 text-white/80 border border-white/10; }
+.input       { @apply w-full px-4 py-2 rounded-xl bg-black/40 border border-white/10 outline-none placeholder-white/40; }
+
+/* Badges por estado */
+.badge { @apply inline-flex items-center px-2 py-1 rounded-md text-xs font-medium; }
+.badge-green  { background: color-mix(in oklab, theme(colors.unitx.teal) 25%, transparent);  color: #bbf7d0; }
+.badge-yellow { background: rgba(251, 191, 36, .2); color: #fde68a; }
+.badge-red    { background: rgba(244, 63, 94, .2);  color: #fecdd3; }
+
+/* Navbar con blur y acento */
+.navbar { @apply sticky top-0 z-20 backdrop-blur border-b border-white/5; background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.15)); }
+.brand-badge { background: linear-gradient(135deg, theme(colors.unitx.teal), theme(colors.unitx.pink)); @apply w-8 h-8 rounded-lg; }
+
 /* app/globals.css */
 @tailwind base;
 @tailwind components;
