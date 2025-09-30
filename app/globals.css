@@ -67,3 +67,19 @@ html, body {
   background: linear-gradient(135deg, #48c9b0, #ff4fbf);
   @apply w-8 h-8 rounded-lg;
 }
+
+/* Tabs */
+.tabs { @apply flex gap-2 flex-wrap; }
+.tab {
+  @apply px-3 py-2 rounded-xl text-sm border border-white/10 bg-white/5
+         text-white/80 hover:text-white/90 transition;
+}
+.tab-active {
+  @apply bg-[#48c9b0] text-black border-transparent;
+}
+
+/* Table util */
+.table-wrap { @apply mt-3 overflow-x-auto; }
+.toolbar { @apply flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between; }
+.select { @apply px-3 py-2 rounded-xl bg-black/40 border border-white/10 outline-none; }
+
