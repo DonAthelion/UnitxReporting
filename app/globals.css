@@ -1,7 +1,9 @@
+/* app/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* BG con toques UnitX */
 :root {
   --bg: #0b0c10;
   --card: #12151a;
@@ -9,27 +11,59 @@
 }
 
 html, body {
-  background: radial-gradient(1200px 600px at 10% -20%, rgba(72,201,176,0.15), transparent 60%),
-              radial-gradient(1200px 600px at 110% 120%, rgba(255,79,191,0.12), transparent 60%),
-              var(--bg);
+  background:
+    radial-gradient(1100px 500px at 0% 0%, rgba(72,201,176,0.12), transparent 60%),
+    radial-gradient(1000px 500px at 100% 100%, rgba(255,79,191,0.10), transparent 60%),
+    var(--bg);
   color: var(--text);
 }
 
-.card {
-  @apply bg-[color:var(--card)] rounded-2xl shadow-unitx p-6 border border-white/5;
+.container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
+
+.card {
+  @apply bg-[color:var(--card)] rounded-2xl shadow-[0_10px_25px_rgba(72,201,176,0.15)] p-6 border border-white/5;
+}
+
 .btn {
-  @apply px-4 py-2 rounded-xl font-semibold transition hover:opacity-90;
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-xl font-semibold transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed;
 }
 .btn-primary {
-  @apply btn bg-unitx.green text-black;
+  @apply btn bg-[#48c9b0] text-black;
+}
+.btn-ghost {
+  @apply btn bg-white/5 text-white/80 border border-white/10;
 }
 .input {
-  @apply w-full px-4 py-2 rounded-xl bg-black/40 border border-white/10 outline-none;
+  @apply w-full px-4 py-2 rounded-xl bg-black/40 border border-white/10 outline-none placeholder-white/40;
 }
-.badge {
-  @apply inline-flex items-center px-2 py-1 rounded-md text-xs font-medium;
+.label {
+  @apply text-sm text-white/70 mb-1;
 }
-.badge-green { @apply bg-emerald-500/20 text-emerald-300; }
-.badge-yellow { @apply bg-amber-500/20 text-amber-300; }
-.badge-red { @apply bg-rose-500/20 text-rose-300; }
+
+.badge { @apply inline-flex items-center px-2 py-1 rounded-md text-xs font-medium; }
+.badge-green  { @apply badge bg-emerald-500/20 text-emerald-300; }
+.badge-yellow { @apply badge bg-amber-500/20  text-amber-300; }
+.badge-red    { @apply badge bg-rose-500/20    text-rose-300; }
+
+.table {
+  @apply w-full text-sm border-collapse;
+}
+.table thead th {
+  @apply text-left font-semibold text-white/70 border-b border-white/10 pb-2;
+}
+.table tbody td {
+  @apply py-3 border-b border-white/5;
+}
+
+.navbar {
+  @apply sticky top-0 z-20 backdrop-blur bg-black/30 border-b border-white/5;
+}
+.brand {
+  @apply flex items-center gap-3 font-semibold tracking-wide;
+}
+.brand-badge {
+  background: linear-gradient(135deg, #48c9b0, #ff4fbf);
+  @apply w-8 h-8 rounded-lg;
+}
