@@ -1,6 +1,6 @@
 // app/page.jsx
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 function Navbar() {
   return (
@@ -38,16 +38,10 @@ function BadgeDays({ days }) {
 }
 
 export default function Dashboard() {
-  // Estados de búsqueda y resultados
+  // -------- Última conexión ----------
   const [term, setTerm] = useState("");
   const [lastSeenRows, setLastSeenRows] = useState([]);
   const [loadingLast, setLoadingLast] = useState(false);
-
-  const [homesRows, setHomesRows] = useState([]);
-  const [loadingHomes, setLoadingHomes] = useState(false);
-
-  const [moneyRows, setMoneyRows] = useState([]);
-  const [loadingMoney, setLoadingMoney] = useState(false);
 
   async function fetchLastSeen() {
     setLoadingLast(true);
@@ -57,6 +51,10 @@ export default function Dashboard() {
     setLoadingLast(false);
   }
 
+  // -------- Casas & últimas conexiones ----------
+  const [homesRows, setHomesRows] = useState([]);
+  const [loadingHomes, setLoadingHomes] = useState(false);
+
   async function fetchHomes() {
     setLoadingHomes(true);
     const res = await fetch(`/api/homes-lastseen`);
@@ -64,6 +62,10 @@ export default function Dashboard() {
     setHomesRows(Array.isArray(data) ? data : []);
     setLoadingHomes(false);
   }
+
+  // -------- Top dinero ----------
+  const [moneyRows, setMoneyRows] = useState([]);
+  const [loadingMoney, setLoadingMoney] = useState(false);
 
   async function fetchMoney() {
     setLoadingMoney(true);
@@ -73,8 +75,44 @@ export default function Dashboard() {
     setLoadingMoney(false);
   }
 
+  // -------- UX Coins ----------
+  const [uxCid, setUxCid] = useState("");
+  const [uxRow, setUxRow] = useState(null);
+  const [loadingUx, setLoadingUx] = useState(false);
+  async function fetchUx() {
+    if (!uxCid) return;
+    setLoadingUx(true);
+    const res = await fetch(`/api/uxcoins?citizenid=${encodeURIComponent(uxCid)}`);
+    const data = await res.json().catch(()=>[]);
+    setUxRow(Array.isArray(data) ? data[0] : data);
+    setLoadingUx(false);
+  }
+
+  // -------- Vehículos ----------
+  const [vehOwner, setVehOwner] = useState("");
+  const [vehRows, setVehRows] = useState([]);
+  const [loadingVeh, setLoadingVeh] = useState(false);
+  async function fetchVeh() {
+    setLoadingVeh(true);
+    const url = vehOwner ? `/api/vehicles?owner=${encodeURIComponent(vehOwner)}` : "/api/vehicles";
+    const res = await fetch(url);
+    const data = await res.json().catch(()=>[]);
+    setVehRows(Array.isArray(data) ? data : []);
+    setLoadingVeh(false);
+  }
+
+  // -------- VIP ----------
+  const [vipRows, setVipRows] = useState([]);
+  const [loadingVip, setLoadingVip] = useState(false);
+  async function fetchVip() {
+    setLoadingVip(true);
+    const res = await fetch(`/api/vip`);
+    const data = await res.json().catch(()=>[]);
+    setVipRows(Array.isArray(data) ? data : []);
+    setLoadingVip(false);
+  }
+
   useEffect(() => {
-    // carga inicial de dos reportes
     fetchHomes();
     fetchMoney();
   }, []);
@@ -83,7 +121,7 @@ export default function Dashboard() {
     <>
       <Navbar />
       <main className="container py-8 space-y-8">
-        {/* Búsqueda rápida Última Conexión */}
+        {/* Última Conexión */}
         <Card
           title="Última Conexión"
           subtitle="Busca por nombre o CitizenID"
@@ -212,23 +250,91 @@ export default function Dashboard() {
           </div>
         </Card>
 
-        {/* Links rápidos al resto de reportes */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <a className="card hover:opacity-95" href="/api/vehicles" target="_blank" rel="noreferrer">
-            <div className="text-lg font-semibold">Vehículos</div>
-            <p className="text-white/60 text-sm mt-1">Listado y búsqueda por dueño</p>
-          </a>
-          <a className="card hover:opacity-95" href="/api/vip" target="_blank" rel="noreferrer">
-            <div className="text-lg font-semibold">VIP</div>
-            <p className="text-white/60 text-sm mt-1">Quién tiene y días restantes</p>
-          </a>
-          <a className="card hover:opacity-95" href="/api/uxcoins?citizenid=TU_CID" target="_blank" rel="noreferrer">
-            <div className="text-lg font-semibold">UX Coins</div>
-            <p className="text-white/60 text-sm mt-1">Consulta por citizenid</p>
-          </a>
-        </div>
+        {/* UX Coins */}
+        <Card
+          title="UX Coins"
+          subtitle="Consulta por CitizenID (ruta JSON configurable en UXCOINS_JSON_PATH)"
+          action={
+            <button className="btn-primary" onClick={fetchUx} disabled={loadingUx}>
+              {loadingUx ? "Consultando…" : "Consultar"}
+            </button>
+          }
+        >
+          <div className="grid sm:grid-cols-[1fr_auto] gap-3">
+            <input className="input" placeholder="CitizenID" value={uxCid} onChange={e=>setUxCid(e.target.value)} />
+            <button className="btn-ghost" onClick={fetchUx} disabled={loadingUx}>
+              {loadingUx ? "Consultando…" : "Consultar"}
+            </button>
+          </div>
+          <div className="mt-3 overflow-x-auto">
+            <table className="table">
+              <thead>
+                <tr><th>CitizenID</th><th>Nombre</th><th className="text-right">UX Coins</th></tr>
+              </thead>
+              <tbody>
+                {uxRow ? (
+                  <tr>
+                    <td className="pr-4">{uxRow.citizenid}</td>
+                    <td className="pr-4">{uxRow.name}</td>
+                    <td className="text-right">{Number(uxRow.uxcoins || 0).toLocaleString()}</td>
+                  </tr>
+                ) : (
+                  <tr><td colSpan={3} className="py-6 text-white/50">Sin datos…</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+
+        {/* Vehículos */}
+        <Card
+          title="Vehículos"
+          subtitle="Listado general o filtro por dueño (nombre)"
+          action={
+            <button className="btn-primary" onClick={fetchVeh} disabled={loadingVeh}>
+              {loadingVeh ? "Buscando…" : "Buscar"}
+            </button>
+          }
+        >
+          <div className="grid sm:grid-cols-[1fr_auto] gap-3">
+            <input className="input" placeholder="Dueño (opcional)" value={vehOwner} onChange={e=>setVehOwner(e.target.value)} />
+            <button className="btn-ghost" onClick={fetchVeh} disabled={loadingVeh}>
+              {loadingVeh ? "Buscando…" : "Buscar"}
+            </button>
+          </div>
+          <div className="mt-3 overflow-x-auto">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Placa</th>
+                  <th>Modelo</th>
+                  <th>Estado</th>
+                  <th>Garage</th>
+                  <th>Tipo</th>
+                  <th>CitizenID</th>
+                  <th>Dueño</th>
+                </tr>
+              </thead>
+              <tbody>
+                {vehRows.map((v, i)=>(
+                  <tr key={i}>
+                    <td className="pr-4">{v.plate}</td>
+                    <td className="pr-4">{v.model}</td>
+                    <td className="pr-4">{v.state}</td>
+                    <td className="pr-4">{v.garage}</td>
+                    <td className="pr-4">{v.type}</td>
+                    <td className="pr-4">{v.citizenid}</td>
+                    <td>{v.owner_name}</td>
+                  </tr>
+                ))}
+                {!loadingVeh && vehRows.length === 0 && (
+                  <tr><td colSpan={7} className="py-6 text-white/50">Sin resultados…</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
       </main>
     </>
   );
 }
-
